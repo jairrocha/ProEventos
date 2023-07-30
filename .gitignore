@@ -396,3 +396,25 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+
+# Ignore node_modules directory (Angular dependencies)
+node_modules/
+
+# Ignore built files
+/dist/
+
+# Ignore npm debug log
+npm-debug.log
+
+# Ignore Angular development server logs
+ng-log/
+
+# Ignore Angular generated files
+*.js
+*.js.map
+*.d.ts
+
+# Ignore Angular build output
+/dist/
+
