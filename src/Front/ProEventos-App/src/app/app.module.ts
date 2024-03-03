@@ -17,7 +17,6 @@ import { NgxSpinnerModule } from 'ngx-spinner'
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { ptBrLocale } from 'ngx-bootstrap/locale';
-import { NgxCurrencyDirective } from "ngx-currency";
 
 
 
@@ -81,8 +80,7 @@ defineLocale('pt-br', ptBrLocale);
       progressBar:true
 
     }),
-    NgxSpinnerModule.forRoot(),
-    NgxCurrencyDirective
+    NgxSpinnerModule.forRoot()
 
   ],
   providers: [
