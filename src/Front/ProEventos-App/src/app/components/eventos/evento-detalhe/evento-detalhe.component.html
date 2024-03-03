@@ -1,0 +1,195 @@
+<div class="card rounded shadow-sm">
+  <form [formGroup]="form">
+    <div class="p-3">
+      <!-- <p>Form value: {{form.value| json }}</p>
+      <p>Form value: {{form.status| json }}</p> -->
+      <div class="mb-3">
+        <label for="tema" class="form-label">Tema</label>
+        <input type="text" class="form-control" [ngClass]="{ 'is-invalid': f.tema.errors && f.tema.touched }" id="tema"
+          formControlName="tema" placeholder="Insira o Tema" />
+        <div *ngIf="f.tema.errors?.required" class="invalid-feedback">
+          Tema é obrigatório
+        </div>
+        <div *ngIf="f.tema.errors?.minlength" class="invalid-feedback">
+          Tema não pode ter menos que 3 caracteres
+        </div>
+        <div *ngIf="f.tema.errors?.maxlength" class="invalid-feedback">
+          Tema não pode ter mais que 50 caracteres
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8">
+          <label for="local" class="form-label">Local</label>
+          <input type="text" class="form-control" [ngClass]="{ 'is-invalid': f.local.errors && f.local.touched }"
+            id="local" formControlName="local" placeholder="" />
+          <div *ngIf="f.local.errors?.required" class="invalid-feedback">
+            Local é obrigatório
+          </div>
+          <div *ngIf="f.local.errors?.minlength" class="invalid-feedback">
+            Local não pode ter menos que 3 caracteres
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label for="dataHora" class="form-label">Data e Hora</label>
+          <input type="datetime" class="form-control"
+          [ngClass]="{
+              'is-invalid': f.dataEvento.errors && f.dataEvento.touched
+            }" id="dataHora" formControlName="dataEvento" placeholder="" bsDatepicker [bsConfig]="bsConfig" />
+          <div *ngIf="f.dataEvento.errors?.required" class="invalid-feedback">
+            Data e Hora é obrigatório
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <label for="qtdPessoas" class="form-label">Qtd Pessoas</label>
+          <input type="text" class="form-control" [ngClass]="{
+              'is-invalid': f.qtdPessoas.errors && f.qtdPessoas.touched
+            }" id="qtdPessoas" formControlName="qtdPessoas" placeholder="" />
+          <div *ngIf="f.qtdPessoas.errors?.required" class="invalid-feedback">
+            Qtd Pessoas é obrigatório
+          </div>
+        </div>
+        <div class="col-md-2">
+          <label for="telefone" class="form-label">Telefone</label>
+          <input type="text" class="form-control" [ngClass]="{
+              'is-invalid': f.telefone.errors && f.telefone.touched
+            }" id="telefone" formControlName="telefone" placeholder="(000) 90000-0000" />
+          <div *ngIf="f.telefone.errors?.required" class="invalid-feedback">
+            Telefone é obrigatório
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label for="email" class="form-label">Email</label>
+          <input type="text" class="form-control" [ngClass]="{ 'is-invalid': f.email.errors && f.email.touched }"
+            id="email" formControlName="email" placeholder="e-mail" />
+          <div *ngIf="f.email.errors?.email" class="invalid-feedback">
+            E-mail não é valido
+          </div>
+          <div *ngIf="f.email.errors?.required" class="invalid-feedback">
+            O E-mail é obrigatório
+          </div>
+        </div>
+        <div class="col-md-4">
+          <label for="imagem" class="form-label">Imagem</label>
+          <input type="text" class="form-control" [ngClass]="{
+              'is-invalid': f.imagemURL.errors && f.imagemURL.touched
+            }" id="imagem" formControlName="imagemURL" placeholder="imagem" />
+          <div *ngIf="f.imagemURL.errors?.required" class="invalid-feedback">
+            Imagem é obrigatório
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <div class="d-flex">
+        <button class="btn btn-outline-secondary me-auto" (click)="resetForm()">
+          Cancelar Alteração
+        </button>
+        <button class="btn btn-success" [disabled]="!form.valid" (click)="salvarEvento()">
+          <!-- <span class="spinner-border spinner-border-sm me-1"></span> -->
+          Salvar Evento
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!--Lotes -->
+<!-- <p>{{form.controls.lotes.value | json}}</p>
+<p>form valid: {{form.controls.lotes.status}}</p> -->
+<div class="card rounded shadow-sm mt-4 mb-5" *ngIf="modoEditar">
+  <div class="card-body">
+    <div class="d-flex border-bottom">
+      <h2 class="me-auto">
+        Lotes do Evento
+      </h2>
+      <h2>
+        <i class="fas fa-money-bill-wave"></i>
+      </h2>
+    </div>
+    <p>Clique em Lote para adicionar e preencher novos Lotes</p>
+    <div class="row g-2">
+      <div [formGroup]="form" class="col">
+        <div formArrayName="lotes" class="border p-3 mt-3" *ngFor="let lote of lotes.controls; let i=index">
+          <fieldset [formGroupName]="i" class="form-group border-0">
+            <legend class="d-flex justify-content-between text-capitalize">
+               {{
+
+                   retornaTituloLote(lote.value)
+               }}
+
+              <button (click)="removerLote(template, i)" class="p-2 btn btn-sm btn-outline-warning mb-1">
+                <i class="fa fa-window-close my-1 me-1"></i>
+                <span class="d-none d-sm-inline">Excluir</span>
+              </button>
+            </legend>
+            <div class="row g-2">
+              <div class="col-md-4">
+                <label for="nome" class="form-label">Nome</label>
+                <input [ngClass]="cssValidator(lotes.get(i+'.nome'))" type="text" class="form-control"
+                  formControlName="nome" placeholder="Lote">
+              </div>
+              <div class="col-md-4">
+                <label for="quantidade" class="form-label">Quantidade</label>
+                <input [ngClass]="cssValidator(lotes.get(i+'.quantidade'))" type="text" class="form-control"
+                  formControlName="quantidade" placeholder="000">
+              </div>
+              <div class="col-md-4">
+                <label for="preco" class="form-label">Preço</label>
+                <input [ngClass]="cssValidator(lotes.get(i+'.preco'))" type="text" class="form-control"
+                  formControlName="preco" placeholder="R$ 0,00">
+              </div>
+              <div class="col-md-4">
+                <label for="dataInicio" class="form-label">Data Início</label>
+                <input type="datetime" class="form-control"
+                bsDatepicker
+                formControlName="dataInicio"
+                placeholder="01/01/2019">
+              </div>
+              <div class="col-md-4">
+                <label for="dataFim" class="form-label">Data Fim</label>
+                <input type="datetime" class="form-control"
+                bsDatepicker
+                formControlName="dataFim"
+                placeholder="01/01/2019">
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
+    </div>
+    <button (click)="adicionarLote()" class="d-flex btn btn-outline-primary mt-4">
+      <i class="fa fa-plus-circle my-1"></i>
+      <span class="ms-1">Lote</span>
+    </button>
+  </div>
+  <div class="card-footer d-flex">
+    <button class="btn btn-outline-secondary me-auto">
+      Cancelar Alteração
+    </button>
+    <button [disabled]="!form.controls.lotes.valid" (click)="salvarLotes()" class="btn btn-success">
+      Salvar Lotes
+    </button>
+  </div>
+</div>
+
+
+<ng-template #template>
+  <div class="modal-body text-center">
+    <p>Tem certeza que quer deletar o lote {{this.loteAtual.nome}}?</p>
+    <button type="button" class="btn btn-default" (click)="confirmDeleteLote()">
+      Sim
+    </button>
+    <button type="button" class="btn btn-primary" (click)="declineDeleteLote()">
+      Não
+    </button>
+  </div>
+</ng-template>
+
+
+
+
+<ngx-spinner>
+  <p style="font-size: 20px; color: white">Carregando...</p>
+</ngx-spinner>
