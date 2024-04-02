@@ -41,7 +41,7 @@ public class EventoService : IEventoService
         return null;
     }
 
-    public async Task<EventoDto> UpdateEventos(int id,EventoDto model)
+    public async Task<EventoDto> UpdateEvento(int id,EventoDto model)
     {
         try
         {
