@@ -29,7 +29,7 @@ public class PalestrantePersistence:IPalestrantePersistence
     public async Task<Palestrante[]> GetAllPalestrantesByNomeAsync(string nome, bool includeEventos = false)
     {
         IQueryable<Palestrante> query = _context.Palestrantes
-            .Where(p => p.Nome.ToLower().Contains(nome.ToLower())).Include(p => p.RedeSociais);
+            .Where(p => p.User.PrimeiroNome.ToLower().Contains(nome.ToLower())).Include(p => p.RedeSociais);
 
         if (includeEventos) query.Include(e => e.PalestranteEventos).ThenInclude(pe => pe.Evento);
 

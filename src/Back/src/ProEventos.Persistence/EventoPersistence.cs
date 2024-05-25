@@ -16,9 +16,12 @@ public class EventoPersistence:IEventoPersistence
         _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
     }
 
-    public async Task<Evento[]> GetAllEventosAsync(bool includePalestrantes = false)
+    public async Task<Evento[]> GetAllEventosAsync(int userId, bool includePalestrantes = false)
     {
-        IQueryable<Evento> query = _context.Eventos.Include(e => e.Lotes).Include(e => e.RedeSocials);
+
+
+        IQueryable<Evento> query = _context.Eventos.Where(e => e.UserId == userId)
+                                        .Include(e => e.Lotes).Include(e => e.RedeSocials);
 
         if (includePalestrantes) query.Include(e => e.PalestranteEventos).ThenInclude(pe => pe.Palestrante);
 
@@ -28,10 +31,11 @@ public class EventoPersistence:IEventoPersistence
         return await query.ToArrayAsync();
     }
 
-    public async Task<Evento[]> GetAllEventosByTemaAsync(string tema, bool includePalestrantes = false)
+    public async Task<Evento[]> GetAllEventosByTemaAsync(int userId, string tema, bool includePalestrantes = false)
     {
 
-        IQueryable<Evento> query = _context.Eventos.Where(e => e.Tema.ToLower().Contains(tema.ToLower()))
+        IQueryable<Evento> query = _context.Eventos
+            .Where(e => e.Tema.ToLower().Contains(tema.ToLower()) && e.UserId == userId)
             .Include(e => e.Lotes).Include(e => e.RedeSocials);
 
         if (includePalestrantes) query.Include(e => e.PalestranteEventos).ThenInclude(pe => pe.Palestrante);
@@ -43,9 +47,9 @@ public class EventoPersistence:IEventoPersistence
     }
 
 
-    public async Task<Evento> GetEventoByIdAsync(int Eventoid, bool includePalestrantes = false)
+    public async Task<Evento> GetEventoByIdAsync(int userId, int Eventoid, bool includePalestrantes = false)
     {
-        IQueryable<Evento> query = _context.Eventos.Where(e => e.Id.Equals(Eventoid))
+        IQueryable<Evento> query = _context.Eventos.Where(e => e.Id.Equals(Eventoid) && e.UserId == userId )
             .Include(e => e.Lotes).Include(e => e.RedeSocials);
 
         if (includePalestrantes) query.Include(e => e.PalestranteEventos).ThenInclude(pe => pe.Palestrante);
@@ -55,4 +59,5 @@ public class EventoPersistence:IEventoPersistence
         return await query.FirstOrDefaultAsync();
     }
 
+  
 }

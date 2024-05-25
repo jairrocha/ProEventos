@@ -35,4 +35,6 @@ public class EventoDto
     public IEnumerable<LoteDto>? Lotes { get; set; }
     public IEnumerable<RedeSocialDto>? RedeSocials { get; set; }
     public IEnumerable<PalestranteDto>? PalestranteEventos { get; set; }
+    public int? UserId { get;  set; }
+    public UserDto? UserDto { get; set; }
 }

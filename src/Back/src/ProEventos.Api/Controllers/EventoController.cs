@@ -1,21 +1,26 @@
-using System.Globalization;
-using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ProEventos.Api.Extensions;
 using ProEventos.Application.Dtos;
 using ProEventos.Application.Interfaces;
 
 namespace ProEventos.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class EventoController : ControllerBase
 {
     public IEventoService _eventoService { get; }
     public IWebHostEnvironment _webHostEnvironment { get; }
+    public IAccountService _accountService { get; }
 
-    public EventoController(IEventoService eventoService, IWebHostEnvironment webHostEnvironment)
+    public EventoController(IEventoService eventoService, 
+                            IWebHostEnvironment webHostEnvironment,
+                            IAccountService accountService)
     {
         _webHostEnvironment = webHostEnvironment;
+        _accountService = accountService;
         _eventoService = eventoService;
     }
 
@@ -25,7 +30,7 @@ public class EventoController : ControllerBase
     {
         try
         {
-            var eventos = await _eventoService.GetAllEventosAsync(true);
+            var eventos = await _eventoService.GetAllEventosAsync(User.GetUserId(), true);
             if (eventos == null) return NoContent();
             return Ok(eventos);
         }
@@ -41,7 +46,7 @@ public class EventoController : ControllerBase
     {
         try
         {
-            var evento = await _eventoService.GetEventoByIdAsync(id, true);
+            var evento = await _eventoService.GetEventoByIdAsync(User.GetUserId(), id, true);
             if (evento == null) return NoContent();
             return Ok(evento);
         }
@@ -57,7 +62,7 @@ public class EventoController : ControllerBase
     {
         try
         {
-            var eventos = await _eventoService.GetAllEventosByTemaAsync(tema, true);
+            var eventos = await _eventoService.GetAllEventosByTemaAsync(User.GetUserId(), tema, true);
             if (eventos == null) return NoContent();
             return Ok(eventos);
         }
@@ -73,7 +78,7 @@ public class EventoController : ControllerBase
     {
         try
         {
-            var evento = await _eventoService.AddEventos(model);
+            var evento = await _eventoService.AddEventos(User.GetUserId(), model);
             if (evento == null) return BadRequest("Erro ao tentar adicionar evento.");
             return Ok(evento);
         }
@@ -89,7 +94,7 @@ public class EventoController : ControllerBase
     {
         try
         {
-            var evento = await _eventoService.GetEventoByIdAsync(eventoId);
+            var evento = await _eventoService.GetEventoByIdAsync(User.GetUserId(), eventoId);
             if (evento == null) return NoContent();
 
             var file = Request.Form.Files[0];
@@ -100,7 +105,7 @@ public class EventoController : ControllerBase
 
             }
             
-            var EventoRetorno = await _eventoService.UpdateEvento(eventoId, evento);
+            var EventoRetorno = await _eventoService.UpdateEvento(User.GetUserId(), eventoId, evento);
             return Ok(EventoRetorno);
         }
         catch (Exception ex)
@@ -115,10 +120,10 @@ public class EventoController : ControllerBase
     {
         try
         {
-             var evento = await _eventoService.GetEventoByIdAsync(id);
+             var evento = await _eventoService.GetEventoByIdAsync(User.GetUserId(), id);
             if (evento == null) return NoContent();
 
-            if (await _eventoService.DeleteEvento(id)) {
+            if (await _eventoService.DeleteEvento(User.GetUserId(), id)) {
 
                 DeleteImage(evento.ImagemURL);
                 return Ok(new {message = "Deletado"} );
@@ -140,7 +145,7 @@ public class EventoController : ControllerBase
     {
         try
         {
-            var evento = await _eventoService.UpdateEvento(id, model);
+            var evento = await _eventoService.UpdateEvento(User.GetUserId(), id, model);
             if (evento == null) return NoContent();
             return Ok(evento);
         }
